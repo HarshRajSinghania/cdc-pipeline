@@ -148,5 +148,11 @@ Now, connect to the PostgreSQL instance to create a table and execute some trans
        *   `"d"` for **Delete** (DELETEs)
    *   Examine the `"before"` and `"after"` blocks within the payload to see how the row states changed over time.
 
+## 📚 References & Further Reading
+*   [Debezium Server Documentation](https://debezium.io/documentation/reference/stable/operations/debezium-server.html) - Setup guide for standalone Debezium Server.
+*   [Debezium PostgreSQL Connector Documentation](https://debezium.io/documentation/reference/stable/connectors/postgresql.html) - Details on PostgreSQL configuration and replication plugins.
+*   [PostgreSQL Logical Replication](https://www.postgresql.org/docs/current/logical-replication.html) - Official PostgreSQL documentation on replication concepts.
+*   [Docker Compose File Reference](https://docs.docker.com/compose/compose-file/) - Reference for composing multi-container applications.
+
 ---
 [⬅ Back to Module 2 README](./README.md)

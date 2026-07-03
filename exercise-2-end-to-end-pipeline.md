@@ -26,5 +26,13 @@ The goal of this project is to design, build, and deploy a fully functional, end
 3.  **Deliverable 3: API Verification**
     *   A working API endpoint URL (or local `curl` command verification instructions) that returns the stored query results in JSON.
 
+## 📚 References & Further Reading
+*   [Apache Kafka Documentation](https://kafka.apache.org/documentation/) - Event streaming platform.
+*   [Apache Spark Documentation](https://spark.apache.org/docs/latest/) - Unified engine for large-scale data processing.
+*   [Apache Flink Documentation](https://flink.apache.org/documentation/) - Framework for stateful computations over data streams.
+*   [Apache Iceberg Documentation](https://iceberg.apache.org/) - Open table format for massive analytic datasets.
+*   [gRPC Documentation](https://grpc.io/docs/) - High-performance remote procedure call framework.
+*   [REST API Tutorial](https://restfulapi.net/) - Guide on design principles for RESTful web services.
+
 ---
 [⬅ Back to Module 2 README](./README.md)
