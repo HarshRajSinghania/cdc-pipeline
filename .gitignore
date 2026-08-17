@@ -1,0 +1,8 @@
+# Python bytecode from running the processor/API on the host
+__pycache__/
+*.pyc
+
+# Debezium offset storage: runtime state tied to a specific database instance,
+# regenerated on every run. Committing it makes a fresh `docker compose up`
+# resume from a WAL position that no longer exists.
+*/cdc-output/offsets.dat

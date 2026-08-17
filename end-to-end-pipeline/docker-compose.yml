@@ -1,0 +1,91 @@
+services:
+  # 1. The Source Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres_source
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=inventory_db
+    # CRITICAL: PostgreSQL must be configured with logical replication enabled for Debezium to work
+    command: ["postgres", "-c", "wal_level=logical"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d inventory_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  # 2. Redis - lightweight sink for CDC events (no Kafka needed).
+  #    Debezium Server 2.5 has no `file` sink, so the events land in a Redis
+  #    stream and are exported to cdc-output/cdc_events.json afterwards.
+  #    Append-only persistence keeps the captured events across restarts.
+  redis:
+    image: redis:7-alpine
+    container_name: redis_sink
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+  # 3. Debezium Server (Standalone, no Kafka required for this quick test)
+  debezium:
+    image: debezium/server:2.5
+    container_name: debezium_server
+    volumes:
+      - ./debezium-conf:/debezium/conf
+      - ./cdc-output:/debezium/data
+    depends_on:
+      - postgres
+      - redis
+
+  processor:
+    build: ./processor
+    container_name: cdc_processor
+    hostname: processor-1
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_STREAM=tutorial.public.products
+      - REDIS_GROUP=analytics-processor
+      - PGHOST=postgres
+      - PGPORT=5432
+      - PGDATABASE=inventory_db
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - VAT_RATE=0.21
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  api:
+    build: ./api
+    container_name: products_api
+    ports:
+      - "8000:8000"
+    environment:
+      - PGHOST=postgres
+      - PGPORT=5432
+      - PGDATABASE=inventory_db
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  pgdata:
+  redisdata:
