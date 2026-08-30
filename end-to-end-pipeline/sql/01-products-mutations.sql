@@ -24,20 +24,3 @@ UPDATE products SET price = 22.99 WHERE name = 'Wireless Mouse';
 
 -- op = "d" (delete)
 DELETE FROM products WHERE name = 'Mechanical Keyboard';
-
-CREATE SCHEMA IF NOT EXISTS analytics;
-
-CREATE TABLE IF NOT EXISTS analytics.products_enriched (
-    id              INTEGER PRIMARY KEY,
-    name            VARCHAR(255) NOT NULL,
-    description     TEXT,
-    price           NUMERIC(10,2) NOT NULL,
-    price_with_vat  NUMERIC(10,2) NOT NULL,
-    category        VARCHAR(50),
-    created_at      TIMESTAMPTZ,
-    -- metadatos de linaje CDC
-    source_lsn      BIGINT NOT NULL,
-    last_op         CHAR(1) NOT NULL,
-    is_deleted      BOOLEAN NOT NULL DEFAULT FALSE,
-    ingested_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
